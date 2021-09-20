@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -27,18 +26,20 @@ import fr.theshark34.swinger.textured.STexturedButton;
 public class LauncherPanel extends JPanel implements SwingerEventListener{
 
 	private Saver saver = new Saver(new File(Launcher.AP_DIR, "launcher.properties"));
-	private JTextField usernameField = new JTextField(saver.get("username"));
-	private JPasswordField passwordField = new JPasswordField();
+	
+	private JTextField usernameField = new JTextField(this.saver.get("username"));
+	private JPasswordField passwordField = new JPasswordField(this.saver.get("password"));
 	
 	private STexturedButton playButton = new STexturedButton(Swinger.getResource("play.png"));
 	private STexturedButton settingsButton = new STexturedButton(Swinger.getResource("settings.png"));
 	private STexturedButton discordButton = new STexturedButton(Swinger.getResource("discord.png"));
 	private STexturedButton exitButton = new STexturedButton(Swinger.getResource("exit.png"));
 
-	private RamSelector ramSelector = new RamSelector(new File(Launcher.AP_DIR, "ram.txt"));
+	private RamSelector ramSelector = new RamSelector(new File("ram"));
+	@SuppressWarnings("deprecation")
 	public LauncherPanel() {
 		this.setLayout(null);
-		usernameField.setForeground(Color.RED);
+		usernameField.setForeground(Color.CYAN);
 		usernameField.setFont(usernameField.getFont().deriveFont(20F));
 		usernameField.setCaretColor(Color.WHITE);
 		usernameField.setOpaque(false);
@@ -69,12 +70,15 @@ public class LauncherPanel extends JPanel implements SwingerEventListener{
 		exitButton.setBounds(638, 10, 30, 30);
 		exitButton.addEventListener(this);
 		this.add(exitButton);
-	}
+		
+		
+
+		}
 	@Override
 	public void onEvent(SwingerEvent e) {
 		if(e.getSource() == exitButton) {
 		System.exit(1);
-		}
+		} 
 		if(e.getSource() == settingsButton) {
 			ramSelector.display();
 		}
@@ -86,6 +90,7 @@ public class LauncherPanel extends JPanel implements SwingerEventListener{
 				e1.printStackTrace();
 			}
 
+			
 		}
 		if(e.getSource() == playButton) {
 			
@@ -107,6 +112,10 @@ public class LauncherPanel extends JPanel implements SwingerEventListener{
 						setFieldsEnabled(true);
 						return;
 					}
+					saver.set("username", usernameField.getText());
+					saver.set("password", passwordField.getText());
+					
+					
 					try {
 						Launcher.launch();
 					}catch (LaunchException e) {
@@ -119,6 +128,7 @@ public class LauncherPanel extends JPanel implements SwingerEventListener{
 			t.start();;
 			
 		}
+		
 	}
 	
 	@Override
@@ -133,7 +143,6 @@ public class LauncherPanel extends JPanel implements SwingerEventListener{
 	}
 	
 	
-	@SuppressWarnings("unused")
 	private void setFieldsEnabled(boolean enabled) {
 		usernameField.setEnabled(enabled);
 		passwordField.setEnabled(enabled);
